@@ -64,7 +64,8 @@ void loop() {
 
   duracao = pulseIn(sensor_echo, HIGH);
   distancia = duracao*0.034/2;
-  Serial.println("Distancia = " + distancia);
+  Serial.print("Distancia = ");
+  Serial.println(distancia);
   
   if(teclado.getKey() == '*' || comando == 0){
     senhaNova();
@@ -122,7 +123,8 @@ int dist_init(int distancia_inicial,long duracao) {
 
   duracao = pulseIn(sensor_echo, HIGH);
   distancia_inicial = duracao*0.034/2;
-  Serial.println("Distancia_inicial = " + distancia_inicial);
+  Serial.println("Distancia_inicial = ");
+  Serial.println(distancia_inicial);
   return distancia_inicial;
   
   }
