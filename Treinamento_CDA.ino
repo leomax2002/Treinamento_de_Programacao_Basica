@@ -24,6 +24,7 @@ byte linhas_pinos[linhas] = {6,7,8,9};
 byte colunas_pinos[colunas] = {10,11,12,13};
 
 long duracao;
+long duracao_ini;
 int distancia_inicial;
 int distancia;
 
@@ -43,7 +44,7 @@ void setup() {
   pinMode(sensor_echo, INPUT);
   pinMode(sensor_trig, OUTPUT);
 
-  distancia_inicial = dist_init(duracao);
+  distancia_inicial = dist_init(duracao_ini);
 
   for(int i = 0; i < 4; i++){
     EEPROM.write(i,aux);
