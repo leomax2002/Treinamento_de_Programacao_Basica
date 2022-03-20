@@ -33,6 +33,7 @@ int comando = 1;
 int senha = 0;
 
 Keypad teclado = Keypad(makeKeymap(chaves),linhas_pinos,colunas_pinos,linhas,colunas);
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
@@ -63,6 +64,7 @@ void loop() {
 
   duracao = pulseIn(sensor_echo, HIGH);
   distancia = duracao*0.034/2;
+  Serial.println("Distancia = " + distancia);
   
   if(teclado.getKey() == '*' || comando == 0){
     senhaNova();
@@ -75,6 +77,7 @@ void loop() {
     
     for(int i = 0; i < 4; i++){
       char tecla = teclado.getKey();
+      Serial.println("Tentativa:" + tecla);
       if(tecla != EEPROM.read(i)){
         digitalWrite(pin_r, HIGH);
         delay(200);
@@ -119,6 +122,7 @@ int dist_init(int distancia_inicial,long duracao) {
 
   duracao = pulseIn(sensor_echo, HIGH);
   distancia_inicial = duracao*0.034/2;
+  Serial.println("Distancia_inicial = " + distancia_inicial);
   return distancia_inicial;
   
   }
@@ -126,6 +130,7 @@ int dist_init(int distancia_inicial,long duracao) {
 void senhaNova(){
   for(int i = 0; i < 4; i++){
     char tecla = teclado.getKey();
+    Serial.println("Tecla:" + tecla);
     EEPROM.write(i,tecla);
     }
   }
