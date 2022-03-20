@@ -10,6 +10,10 @@
 
 char aux = '0';
 
+unsigned long inicial = millis();
+unsigned long fim = millis();
+unsigned long intervalo;
+
 const byte colunas = 4;
 const byte linhas = 4;
 
@@ -28,10 +32,9 @@ long duracao_ini;
 int distancia_inicial;
 int distancia;
 
-int dist_init(int distancia_inicial,long duracao);
-void tentativa();
-void senhaNova();
+int dist_init(long duracao);
 
+int comando = 1;
 int senha = 0;
 
 Keypad teclado = Keypad(makeKeymap(chaves),linhas_pinos,colunas_pinos,linhas,colunas);
@@ -55,31 +58,37 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  fim = millis();
+  intervalo = fim - inicial;
   digitalWrite(pin_r, LOW);
   digitalWrite(pin_g, LOW);
   
-  digitalWrite(sensor_trig, LOW);
-  delayMicroseconds(2);
-  digitalWrite(sensor_trig, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(sensor_trig, LOW);
-
-  duracao = pulseIn(sensor_echo, HIGH);
-  distancia = duracao*0.034/2;
-  Serial.print("Distancia = ");
-  Serial.println(distancia);
   
+  if(intervalo < 1000){
   if(teclado.getKey() == '*'){
+    Serial.println("Nova Senha");
     senhaNova();
     digitalWrite(pin_r, HIGH);
     digitalWrite(pin_g, HIGH);
     delay(200);
     }
-  else{
+  else if(teclado.getKey() == '#'){
+    Serial.println("Nova Tentativa");
     tentativa();
     }
-
-  if(distancia <= distancia_inicial){
+  }
+else{
+ digitalWrite(sensor_trig, LOW);
+ delayMicroseconds(2);
+ digitalWrite(sensor_trig, HIGH);
+ delayMicroseconds(10);
+ digitalWrite(sensor_trig, LOW);
+ duracao = pulseIn(sensor_echo, HIGH);
+  distancia = duracao*0.034/2;
+  Serial.print("Distancia = ");
+  Serial.println(distancia);
+  
+  if(distancia < distancia_inicial){
     if(senha){
       senha = 0;
       delay(5000);
@@ -91,6 +100,8 @@ void loop() {
       noTone(buzzer);
       }
     }
+ inicial = millis();
+}
 
   
   
@@ -115,30 +126,72 @@ int dist_init(long duracao) {
 
 void senhaNova(){
   int i = 0;
-  while(i < 4){
+  String s = "";
+  while(i <= 4){
     char tecla = teclado.getKey();
-    Serial.println("Tecla:" + tecla);
+    if(tecla){
+    if(tecla != '#' && tecla != '*' && i < 4){
+    Serial.print("Tecla: ");
+    Serial.println(tecla);
     EEPROM.write(i,tecla);
+    s+= tecla;
     i++;
     }
+    else if (tecla == '*' && i > 0){
+     Serial.print("Retirando ");
+     char r = EEPROM.read(i-1);
+     Serial.println(r);
+     s.remove(i-1);
+     i--;
+      }
+    else if (tecla == '#' && i < 4){
+      Serial.println("Caractere Inválido");
+      }
+    else if (tecla == '#' && i == 4){
+      i++;
+    }
+    }
+    }
+   Serial.print("Senha Redefinida para: ");
+   Serial.println(s);
   }
 
 
 void tentativa(){
   int i = 0;
   int correto = 0;
-  while(i < 4){
+  while(i <= 4){
     char tecla = teclado.getKey();
-    Serial.println("Tentativa:" + tecla);
+    if (tecla){
+    if (tecla != '#' && tecla != '*'){
+    Serial.print("Tentativa:" );
+    Serial.println(tecla);
     if(tecla != EEPROM.read(i)){
       Serial.println("Senha Incorreta");
+      break;
       }
     else{
       correto++;
       }
     i++;
     }
+    else if (tecla == '*' && i > 0){
+     Serial.print("Retirando ");
+     char r = EEPROM.read(i-1);
+     Serial.println(r);
+     i--;
+      }
+    else if (tecla == '#' && i < 4){
+      Serial.println("Caractere Inválido");
+      }
+    else if (tecla == '#' && i == 4){
+      i++;
+    }
+    }
+    
+    }
   if(correto == 4){
+    Serial.println("Senha Correta");
     senha = 1;
     digitalWrite(pin_g, HIGH);
         delay(200);
