@@ -29,8 +29,9 @@ int distancia_inicial;
 int distancia;
 
 int dist_init(int distancia_inicial,long duracao);
+void tentativa();
+void senhaNova();
 
-int comando = 1;
 int senha = 0;
 
 Keypad teclado = Keypad(makeKeymap(chaves),linhas_pinos,colunas_pinos,linhas,colunas);
@@ -68,32 +69,14 @@ void loop() {
   Serial.print("Distancia = ");
   Serial.println(distancia);
   
-  if(teclado.getKey() == '*' || comando == 0){
+  if(teclado.getKey() == '*'){
     senhaNova();
     digitalWrite(pin_r, HIGH);
     digitalWrite(pin_g, HIGH);
     delay(200);
     }
-  else if(comando == 0){
-    int correto = 0;
-    
-    for(int i = 0; i < 4; i++){
-      char tecla = teclado.getKey();
-      Serial.println("Tentativa:" + tecla);
-      if(tecla != EEPROM.read(i)){
-        digitalWrite(pin_r, HIGH);
-        delay(200);
-        break;
-        }
-      else{
-        correto++;
-        }
-      }
-   if(correto == 4){
-    senha = 1;
-    digitalWrite(pin_g, HIGH);
-        delay(200);
-    }
+  else{
+    tentativa();
     }
 
   if(distancia <= distancia_inicial){
@@ -131,9 +114,33 @@ int dist_init(long duracao) {
   }
 
 void senhaNova(){
-  for(int i = 0; i < 4; i++){
+  int i = 0;
+  while(i < 4){
     char tecla = teclado.getKey();
     Serial.println("Tecla:" + tecla);
     EEPROM.write(i,tecla);
+    i++;
+    }
+  }
+
+
+void tentativa(){
+  int i = 0;
+  int correto = 0;
+  while(i < 4){
+    char tecla = teclado.getKey();
+    Serial.println("Tentativa:" + tecla);
+    if(tecla != EEPROM.read(i)){
+      Serial.println("Senha Incorreta");
+      }
+    else{
+      correto++;
+      }
+    i++;
+    }
+  if(correto == 4){
+    senha = 1;
+    digitalWrite(pin_g, HIGH);
+        delay(200);
     }
   }
