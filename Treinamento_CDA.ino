@@ -43,7 +43,7 @@ void setup() {
   pinMode(sensor_echo, INPUT);
   pinMode(sensor_trig, OUTPUT);
 
-  distancia_inicial = dist_init(distancia_inicial,duracao);
+  distancia_inicial = dist_init(duracao);
 
   for(int i = 0; i < 4; i++){
     EEPROM.write(i,aux);
@@ -113,7 +113,7 @@ void loop() {
 
 }
 
-int dist_init(int distancia_inicial,long duracao) {
+int dist_init(long duracao) {
 
   digitalWrite(sensor_trig, LOW);
   delayMicroseconds(2);
@@ -122,8 +122,8 @@ int dist_init(int distancia_inicial,long duracao) {
   digitalWrite(sensor_trig, LOW);
 
   duracao = pulseIn(sensor_echo, HIGH);
-  distancia_inicial = duracao*0.034/2;
-  Serial.println("Distancia_inicial = ");
+  int distancia_inicial = duracao*0.034/2;
+  Serial.print("Distancia_inicial = ");
   Serial.println(distancia_inicial);
   return distancia_inicial;
   
