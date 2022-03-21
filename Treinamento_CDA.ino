@@ -34,7 +34,6 @@ int distancia;
 
 int dist_init(long duracao);
 
-int comando = 1;
 int senha = 0;
 
 Keypad teclado = Keypad(makeKeymap(chaves),linhas_pinos,colunas_pinos,linhas,colunas);
