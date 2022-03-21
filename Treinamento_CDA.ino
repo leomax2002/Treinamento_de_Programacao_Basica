@@ -88,7 +88,7 @@ else{
   Serial.print("Distancia = ");
   Serial.println(distancia);
   
-  if(distancia < distancia_inicial){
+  if(distancia < distancia_inicial - 5){
     if(senha){
       senha = 0;
       delay(5000);
