@@ -1,4 +1,4 @@
-#define  pin_r 4
+#define pin_r 4
 #define pin_y 5
 #define pin_g 6
 #define pin_button 7
